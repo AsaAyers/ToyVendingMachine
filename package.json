@@ -1,0 +1,22 @@
+{
+  "name": "vending-machine",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "backbone": "^1.1.2",
+    "backbone.marionette": "^2.0.1",
+    "browserify": "^4.2.0",
+    "coffeeify": "^0.6.0",
+    "grunt-contrib-connect": "^0.8.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "jquery": "^2.1.1",
+    "webserver": "^1.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
