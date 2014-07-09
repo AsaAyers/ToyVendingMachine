@@ -8,6 +8,11 @@ class CoinView extends Marionette.ItemView
 
     tagName: 'button'
 
+    triggers:
+        'click': 'deposit'
+
+
+
 module.exports = class CoinList extends Marionette.CompositeView
     childView: CoinView
     childViewContainer: '.js-stuff'
@@ -20,3 +25,7 @@ module.exports = class CoinList extends Marionette.CompositeView
 
     modelEvents:
         'change:pending': 'render'
+
+    childEvents:
+        'deposit': (view, { model } )->
+            @trigger 'change:state', 'onDeposit', model.get('amount')

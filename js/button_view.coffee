@@ -16,7 +16,14 @@ class ButtonView extends Marionette.ItemView
     modelEvents:
         'change:qty': 'render'
 
+    triggers:
+        'click': 'select:item'
+
 
 module.exports = class ButtonCollectionView extends Marionette.CollectionView
     childView: ButtonView
+
+    childEvents:
+        'select:item': (view, { model } ) ->
+            @trigger 'change:state', 'onSelect', model
 

@@ -27,9 +27,10 @@ $ ->
 
 
     coinData = new Backbone.Collection [
-        { amount: 0.5 }
+        { amount: 0.05 }
         { amount: 0.10 }
         { amount: 0.25 }
+        { amount: 0.5 }
         { amount: 1 }
         { amount: 5 }
     ]
@@ -51,5 +52,76 @@ $ ->
         el: '#buttons'
     buttons.render()
 
+    currentState = 'waiting'
 
+    states =
+        waiting:
+            onDeposit: (amount) ->
+                pending = mainState.get('pending')
+                pending += amount
+                mainState.set 'pending', pending
+
+                # Everything must have the same price.
+                if pending >= .75
+                    return 'ready'
+                return 'waiting'
+
+            onCancel: ->
+                change = mainState.get('change') + mainState.get('pending')
+
+                mainState.set
+                    pending: 0
+                    change: change
+
+                return 'waiting'
+
+            onTakeChange: ->
+                mainState.set 'change', 0
+                return 'waiting'
+
+        ready:
+            onDeposit: (amount) ->
+                change = mainState.get('change') + amount
+                mainState.set 'change', change
+                return 'ready'
+
+            onSelect: (item) ->
+                change = mainState.get('change')
+                change += mainState.get('pending') - item.get('price')
+
+                qty = item.get 'qty'
+
+                item.set 'qty', qty - 1
+
+                mainState.set
+                    pending: 0
+                    change: change
+
+                return 'waiting'
+
+            onCancel: ->
+                pending = mainState.get('pending')
+
+                mainState.set
+                    pending: 0
+                    change: pending
+
+                return 'waiting'
+            onTakeChange: ->
+                mainState.set 'change', 0
+                return 'ready'
+
+
+    changeState = (eventType, args...) ->
+        console.log 'changeState', currentState, arguments...
+
+        unless states[currentState][eventType]?
+            console.log 'Invalid event', eventType
+            return
+
+        currentState = states[currentState][eventType](args...)
+
+    coins.on 'change:state', changeState
+    change.on 'change:state', changeState
+    buttons.on 'change:state', changeState
 
